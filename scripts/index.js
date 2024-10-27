@@ -22,13 +22,13 @@ const popupImage = imagePopup.querySelector(".popup__image");
 const popupCaption = imagePopup.querySelector(".popup__caption");
 
 const validationSettings = {
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__button_disabled',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__error_visible'
-}
+	formSelector: ".popup__form",
+	inputSelector: ".popup__input",
+	submitButtonSelector: ".popup__button",
+	inactiveButtonClass: "popup__button_disabled",
+	inputErrorClass: "popup__input_type_error",
+	errorClass: "popup__error_visible",
+};
 
 function createCard(name, link) {
 	const card = cardTemplate.cloneNode(true);
@@ -54,10 +54,18 @@ function createCard(name, link) {
 
 function openModal(popup) {
 	popup.classList.add("popup_is-opened");
+	document.addEventListener("keydown", closeByEsc);
 }
 
 function closeModal(popup) {
 	popup.classList.remove("popup_is-opened");
+	document.removeEventListener("keydown", closeByEsc);
+}
+
+function closeByEsc(evt) {
+	if (evt.key == "Escape") {
+		closeModal(document.querySelector(".popup_is-opened"));
+	}
 }
 
 function openProfilePopup() {
@@ -117,10 +125,10 @@ function hasInvalidInput(inputList) {
 
 function toggleButtonState(inputList, buttonElement, settings) {
 	if (hasInvalidInput(inputList)) {
-    buttonElement.setAttribute("disabled", "true");
+		buttonElement.setAttribute("disabled", "true");
 		buttonElement.classList.add(settings.inactiveButtonClass);
 	} else {
-    buttonElement.removeAttribute("disabled");
+		buttonElement.removeAttribute("disabled");
 		buttonElement.classList.remove(settings.inactiveButtonClass);
 	}
 }
@@ -160,6 +168,11 @@ popupCloseButtons.forEach((button) => {
 
 popups.forEach((popup) => {
 	popup.classList.add("popup_is-animated");
+	popup.addEventListener("click", (evt) => {
+		if (!evt.target.closest(".popup__content")) {
+			closeModal(popup);
+		}
+	});
 });
 
 profileEditButton.addEventListener("click", openProfilePopup);
