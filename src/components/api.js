@@ -1,4 +1,22 @@
-import { config } from "./index.js";
+let config = JSON.parse(localStorage.getItem("config")) || { headers: { "Content-Type": "application/json" } };
+
+const login = (token, groupLink) => {
+	return fetch(`${groupLink}/users/me`, {
+		method: "GET",
+		headers: {
+			authorization: token,
+		},
+	}).then((res) => {
+		if (res.ok) {
+			config.headers.authorization = token;
+			config.baseUrl = groupLink;
+			localStorage.setItem("config", JSON.stringify(config));
+			return res.json();
+		} else {
+			return Promise.reject(`Ошибка ${res.status}`);
+		}
+	});
+};
 
 const checkResponse = (res) => {
 	if (res.ok) {
@@ -67,4 +85,4 @@ const removeLike = (cardId) => {
 	}).then(checkResponse);
 };
 
-export { getUser, getCards, updateProfile, addCard, deleteCard, putLike, removeLike, updateAvatar };
+export { login, getUser, getCards, updateProfile, addCard, deleteCard, putLike, removeLike, updateAvatar };

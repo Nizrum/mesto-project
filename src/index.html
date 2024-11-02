@@ -13,6 +13,23 @@
   <div class="page__content">
     <header class="header page__section">
       <img src="<%=require('./images/logo.svg')%>" alt="Логотип проекта масто" class="logo header__logo">
+      <button class="header__logout-button">
+        <svg class="header__logout-image" fill="#ffff" height="800px" width="800px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 497.298 497.298" xml:space="preserve">
+          <g>
+            <g>
+              <polygon points="324.837,95.649 311.769,110.38 456.526,238.803 109.942,238.803 109.942,258.495 456.526,258.495 
+			311.769,386.909 324.837,401.639 497.298,248.649 		" />
+            </g>
+          </g>
+          <g>
+            <g>
+              <polygon points="434.317,149.303 434.317,2.495 0,2.495 0,494.803 434.317,494.803 434.317,347.976 414.625,347.976 
+			414.625,475.111 19.692,475.111 19.692,22.188 414.625,22.188 414.625,149.303 		" />
+            </g>
+          </g>
+        </svg>
+      </button>
     </header>
     <main class="content">
       <section class="profile page__section">
@@ -90,18 +107,21 @@
     </div>
     <div class="popup popup_type_login popup_is-opened">
       <div class="popup__content">
-        <h3 class="popup__title">Введите токен и идентификатор группы</h3>
+        <h3 class="popup__title">Введите токен и ссылку на группу</h3>
         <form class="popup__form" name="login">
           <input type="text" name="token" id="token-input" class="popup__input popup__input_type_token"
             placeholder="Токен" required>
           <span class="popup__error token-input-error"></span>
-          <input type="text" name="group" id="group-input" class="popup__input popup__input_type_group"
-            placeholder="Идентификатор группы" required>
+          <input type="url" name="group" id="group-input" class="popup__input popup__input_type_group"
+            placeholder="Ссылка на группу" required>
           <span class="popup__error group-input-error"></span>
           <button type="submit" class="button popup__button">Войти</button>
         </form>
       </div>
     </div>
+  </div>
+  <div class="loader">
+    <img src="<%=require('./images/loader.svg')%>" alt="" class="loader__image">
   </div>
 
   <template id="card-template">

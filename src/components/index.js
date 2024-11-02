@@ -2,19 +2,17 @@ import "../pages/index.css";
 import { enableValidation } from "./validation.js";
 import { createCard } from "./card.js";
 import { openModal, closeModal } from "./modal.js";
-import { getUser, getCards, updateProfile, addCard, updateAvatar } from "./api.js";
+import { login, getUser, getCards, updateProfile, addCard, updateAvatar } from "./api.js";
 
 let userId;
-let config = {
-	headers: {
-		"Content-Type": "application/json",
-	},
-};
 
+const page = document.querySelector(".page");
 const cardTemplate = document.querySelector("#card-template").content;
 const placesList = document.querySelector(".places__list");
 const popups = document.querySelectorAll(".popup");
 const popupCloseButtons = document.querySelectorAll(".popup__close");
+const loader = document.querySelector(".loader");
+const logoutButton = document.querySelector(".header__logout-button");
 
 const profilePopup = document.querySelector(".popup_type_edit");
 const profileEditButton = document.querySelector(".profile__edit-button");
@@ -126,13 +124,7 @@ function handleAvatarFormSubmit(evt) {
 		});
 }
 
-function handleLoginFormSubmit(evt) {
-	evt.preventDefault();
-	loginPopupSubmitButton.textContent = "Вход...";
-
-	config.headers.authorization = popupInputToken.value;
-	config.baseUrl = `https://nomoreparties.co/v1/${popupInputGroup.value}`;
-
+function loadPage() {
 	Promise.all([getUser(), getCards()])
 		.then(([user, cards]) => {
 			profileTitle.textContent = user.name;
@@ -149,7 +141,32 @@ function handleLoginFormSubmit(evt) {
 		.catch((err) => alert(err))
 		.finally(() => {
 			loginPopupSubmitButton.textContent = "Войти";
+			hideLoader();
 		});
+}
+
+function handleLoginFormSubmit(evt) {
+	evt.preventDefault();
+	loginPopupSubmitButton.textContent = "Вход...";
+
+	login(popupInputToken.value, popupInputGroup.value)
+		.then((res) => {
+			loadPage();
+		})
+		.catch((err) => {
+      loginPopupSubmitButton.textContent = "Войти";
+      alert('Неверный токен или ссылка на группу. Попробуйте ещё раз.');
+    });
+}
+
+function showLoader() {
+	loader.classList.add("loader_visible");
+	page.classList.add("page_no-scroll");
+}
+
+function hideLoader() {
+	loader.classList.remove("loader_visible");
+	page.classList.remove("page_no-scroll");
 }
 
 popupCloseButtons.forEach((button) => {
@@ -176,7 +193,17 @@ cardFormElement.addEventListener("submit", handleCardFormSubmit);
 avatarCover.addEventListener("click", openAvatarEditPopup);
 avatarFormElement.addEventListener("submit", handleAvatarFormSubmit);
 loginFormElement.addEventListener("submit", handleLoginFormSubmit);
+logoutButton.addEventListener("click", () => {
+	localStorage.removeItem("config");
+  window.location.reload();
+});
 
 enableValidation(validationSettings);
 
-export { config, cardTemplate, imagePopup, popupImage, popupCaption };
+if (localStorage.getItem("config") != null) {
+	closeModal(loginPopup);
+	showLoader();
+	loadPage();
+}
+
+export { cardTemplate, imagePopup, popupImage, popupCaption };
